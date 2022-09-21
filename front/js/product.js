@@ -1,95 +1,29 @@
-const products = [
-    {
-      "colors": ["Blue", "White", "Black"],
-      "_id": "107fb5b75607497b96722bda5b504926",
-      "name": "Kanap Sinopé",
-      "price": 1849,
-      "imageUrl": "../../back/images/kanap01-opt.webp",
-      "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "altTxt": "Photo d'un canapé bleu, deux places"
-    },
-    {
-      "colors": ["Black/Yellow", "Black/Red"],
-      "_id": "415b7cacb65d43b2b5c1ff70f3393ad1",
-      "name": "Kanap Cyllène",
-      "price": 4499,
-      "imageUrl": "../../back/images/kanap02-opt.webp",
-      "description": "Morbi nec erat aliquam, sagittis urna non, laoreet justo. Etiam sit amet interdum diam, at accumsan lectus.",
-      "altTxt": "Photo d'un canapé jaune et noir, quattre places"
-    },
-    {
-      "colors": ["Green", "Red", "Orange"],
-      "_id": "055743915a544fde83cfdfc904935ee7",
-      "name": "Kanap Calycé",
-      "price": 3199,
-      "imageUrl": "../../back/images/kanap03-opt.webp",
-      "description": "Pellentesque fermentum arcu venenatis ex sagittis accumsan. Vivamus lacinia fermentum tortor.Mauris imperdiet tellus ante.",
-      "altTxt": "Photo d'un canapé d'angle, vert, trois places"
-    },
-    {
-      "colors": ["Pink", "White"],
-      "_id": "a557292fe5814ea2b15c6ef4bd73ed83",
-      "name": "Kanap Autonoé",
-      "price": 1499,
-      "imageUrl": "../../back/images/kanap04-opt.webp",
-      "description": "Donec mattis nisl tortor, nec blandit sapien fermentum at. Proin hendrerit efficitur fringilla. Lorem ipsum dolor sit amet.",
-      "altTxt": "Photo d'un canapé rose, une à deux place"
-    },
-    {
-      "colors": ["Grey", "Purple", "Blue"],
-      "_id": "8906dfda133f4c20a9d0e34f18adcf06",
-      "name": "Kanap Eurydomé",
-      "price": 2249,
-      "imageUrl": "../../back/images/kanap05-opt.webp",
-      "description": "Ut laoreet vulputate neque in commodo. Suspendisse maximus quis erat in sagittis. Donec hendrerit purus at congue aliquam.",
-      "altTxt": "Photo d'un canapé gris, trois places"
-    },
-    {
-      "colors": ["Grey", "Navy"],
-      "_id": "77711f0e466b4ddf953f677d30b0efc9",
-      "name": "Kanap Hélicé",
-      "price": 999,
-      "imageUrl": "../../back/images/kanap06-opt.webp",
-      "description": "Curabitur vel augue sit amet arcu aliquet interdum. Integer vel quam mi. Morbi nec vehicula mi, sit amet vestibulum.",
-      "altTxt": "Photo d'un canapé gris, deux places"
-    },
-    {
-      "colors": ["Red", "Silver"],
-      "_id": "034707184e8e4eefb46400b5a3774b5f",
-      "name": "Kanap Thyoné",
-      "price": 1999,
-      "imageUrl": "../../back/images/kanap07-opt.webp",
-      "description": "EMauris imperdiet tellus ante, sit amet pretium turpis molestie eu. Vestibulum et egestas eros. Vestibulum non lacus orci.",
-      "altTxt": "Photo d'un canapé rouge, deux places"
-    },
-    {
-      "colors": ["Pink", "Brown", "Yellow", "White"],
-      "_id": "a6ec5b49bd164d7fbe10f37b6363f9fb",
-      "name": "Kanap orthosie",
-      "price": 3999,
-      "imageUrl": "../../back/images/kanap08-opt.webp",
-      "description": "Mauris molestie laoreet finibus. Aenean scelerisque convallis lacus at dapibus. Morbi imperdiet enim metus rhoncus.",
-      "altTxt": "Photo d'un canapé rose, trois places"
-    }
-];
+/*************************** FICHIER PRODUCT.JS (RATTACHE A PRODUCT.HTML) ***************************/
 
-// récupération de l'id dans l'url du lien d'un produit page accueil :
+//_______________________________________ GESTION AFFICHAGE PAGE ____________________________________/
+//________ requete GET de l'ensemble des produits + recuperation des infos des produits:   
+fetch("http://localhost:3000/api/products")
+.then((resultats) => resultats.json())
+.then(function(value) {
+  const products = value;
+  //console.log("voici le tableau de tous les produits:", products);
+
+//________ recuperation de l'id dans l'url du lien d'un produit de la page accueil:
 const productId = new URL(window.location.href).searchParams.get("id")
-console.log(productId)
+//console.log(productId)
 
-// requete d'un produit via son id + récupération des infos du produit en question : 
+//________ requete GET d'un produit via son id + recuperation des infos sous forme tableau: 
 fetch("http://localhost:3000/api/products/" + productId)
-  .then(function(resultats) {
-    return resultats.json ();
-  })
-  .then(function(value) {
-    console.log(value)
+.then((resultats) => resultats.json())
+.then(function(value) {
+//  console.log("voici les infos du produit en cours:",value)
 
-
-// boucle for of pour parcourir les produits et comparer l'id récupéré de l'url avec l'id du produit :
+//________ boucle for of pour parcourir le tableau de l'ensemble des produits:
   for (let product of products) {
+//________ et comparer l'id récupéré de l'url avec les id de chacun des produits présents dans le tableau "products":
     if (productId === product._id) {
 
+//________ creation/selection des elements html pour affichage des "infos produit" dans le DOM:
       const imageElement = document.createElement("img")
       imageElement.src = product.imageUrl
       imageElement.alt = product.altTxt
@@ -99,8 +33,9 @@ fetch("http://localhost:3000/api/products/" + productId)
       document.getElementById("price").textContent = product.price
       document.getElementById("description").textContent = product.description
 
-// boucle for of pour parcourir toutes les couleurs par produit + création et affichage de l'élément "option" avec choix des couleurs :
+//________ boucle for of pour parcourir le tableau des couleurs par produit:
       for (let color of product.colors) {
+//________ et creation de l'element html "option" avec choix des couleurs et affichage dans le DOM:
         const colorElement = document.createElement("option")
         colorElement.textContent = color
         document.querySelector("#colors").appendChild(colorElement)
@@ -109,46 +44,59 @@ fetch("http://localhost:3000/api/products/" + productId)
   }
 })
 
-function saveOrderStock(orderStock) {
-  localStorage.setItem("orderStock", JSON.stringify(orderStock))
+//_____________________________________ GESTION AJOUT PRODUIT / PANIER _______________________________/
+//________ creation d'une fonction qui enregistre le panier dans le localstorage (stockProduct = tableau d'objets):
+function saveStock(stock) {
+  localStorage.setItem("stockProduct", JSON.stringify(stock))
 }
 
-function getOrderStock() {
-  let orderStock = localStorage.getItem("orderStock")
-  if (orderStock == null) {
+//________ creation d'une fonction qui recupere le panier a partir du localstorage:
+function getStock() {
+  let stock = localStorage.getItem("stockProduct")
+  if (stock == null) {
     return []
-  }
-  else {
-    return JSON.parse(orderStock)
+  } else {
+   return JSON.parse(stock)
   }
 }
 
-function addOrderStock(product) {
-  let orderStock = getOrderStock()
-  let foundProduct = orderStock.find(p => p.id == product.id && p.color == product.color) /////ETAPE A RETRAVAILLER ///////
+//________ creation d'une fonction qui permet d'ajouter un produit au panier:
+function addStock(product) {
+//________ recuperation du panier à partir du localstorage: 
+  let stock = getStock()
+//________ recherche si les references (id && color) du produit ajoute existent deja dans le panier:
+let foundProduct = stock.find(stock => stock.id == product.id && stock.color == product.color) 
+//________ si le produit ajouté existe deja dans le panier :
   if (foundProduct != undefined) {
-    
-    foundProduct.quantity = foundProduct.quantity + product.quantity
-    //saveOrderStock(foundProduct)
+//________ si la quantite du produit ajoute repond à des critères d'acceptation:
+    if (product.quantity >= 1 && product.quantity <= 99) { //&& Number.isInteger(product.quantity)) {
+//________ la quantite du produit deja en stock est incrementée avec celle du produit ajouté: 
+      foundProduct.quantity = parseInt(foundProduct.quantity) + parseInt(product.quantity)  
+    }
+  } 
+//________ sinon le produit ajouté est "pushé" dans le panier s'il repond à des critères d'acceptation:
+  else {
+    if (product.color !== "" && product.quantity >= 1 && product.quantity <= 100) { //&& Number.isInteger(product.quantity)) {
+      stock.push(product)
+    }
   }
-  orderStock.push(product)
-  saveOrderStock(orderStock)
+//________ le "nouveau" panier est ensuite enregistré dans le localstorage:
+  saveStock(stock)
 }
 
-// ecoute au click du bouton "commander" :
+//____________________________________ GESTION BOUTON "AJOUTER PANIER" ______________________________/
+//________ selection des elements dans le html :
 const orderButton = document.querySelector("#addToCart")
+const quantityStock = document.getElementById("quantity")
+const colorStock = document.getElementById("colors")
+//________ ecoute au click du bouton :
 orderButton.addEventListener("click", function() {
-
-// création du panier pour le localStorage :
-let quantityStock = document.getElementById("quantity")
-let colorStock = document.getElementById("colors")
-let orderStock = [
-  {"id": productId,
-  "quantity": quantityStock.value,
-  "color": colorStock.value}
-]
-
-addOrderStock(orderStock)
-
-}
-)
+//________ definition du panier dans le localStorage :
+  let stock = 
+    {"id": productId,
+    "quantity": quantityStock.value,
+    "color": colorStock.value}
+//________ appel de la fonction "add" pour execution (creation panier ou ajout produit ou ajout quantite):
+  addStock(stock)
+})
+})
