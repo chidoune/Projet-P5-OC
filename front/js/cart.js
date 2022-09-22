@@ -193,7 +193,7 @@ let emailError = document.getElementById("emailErrorMsg")
 
 //____________ déclaration des regex pour verification de la validite des champs:
 let textRegex = /^[a-zàåáçéèêëîïìíñœæôöòóùûüúÿ\s-]{2,30}$/i
-let addressRegex = /^[a-zàåáçéèêëîïìíñœæôöòóùûüúÿ{0-9}\s-]{2,50}$/i
+let addressRegex = /^[a-z'àåáçéèêëîïìíñœæôöòóùûüúÿ{0-9}\s-]{2,50}$/i
 let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 
@@ -255,7 +255,8 @@ orderButton.addEventListener("submit", function(e) {
 //________verification de la validite des criteres imposés par les regex:
   if (inputFirstName.value.match(textRegex) !== null && inputLastName.value.match(textRegex) !== null
   && inputAddress.value.match(addressRegex) !== null && inputCity.value.match(textRegex) !== null 
-  && inputEmail.value.match(emailRegex) !== null) {
+  && inputEmail.value.match(emailRegex) !== null && inputFirstName.value !=="" && inputLastName.value !== ""
+  && inputAddress.value !== "" && inputCity.value !== "" && inputEmail.value !== "") {
 //________ declaration/creation de l'objet qui contient toutes les infos à envoyer à l'API :
     const userInfo = {
       contact : {
