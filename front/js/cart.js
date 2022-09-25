@@ -1,27 +1,24 @@
-/****************************** FICHIER CART.JS (RATTACHE A CART.HTML) ******************************/
+/******************************* FICHIER CART.JS (RATTACHE A CART.HTML) ******************************/
 
 //__________________________________ DECLARATION/RECUPERATION DONNEES/VARIABLES ______________________/
-//________ recuperation sous forme d'un tableau du panier present dans le localstorage :
+//________ recuperation du panier present dans le localstorage:
 let basket = JSON.parse(localStorage.getItem("stockProduct"));
 //console.log("voici le panier:",basket)
 
 //________ declaration/initialisation de variables :
-let sommeQuantity = 0;
-let totalAmount = 0;
 let allButtonSuppr = [];
 let allInput = [];
 
 //________________________________________ GESTION AFFICHAGE PAGE ____________________________________/
-//________ boucle for of pour parcourir chaque produit du panier :
+//________ boucle for of qui parcourt chaque produit du panier et requete son produit via son id:
 for (let element of basket) {
-  //________ requete GET d'un produit via son id + récupération des infos sous forme tableau :
   fetch("http://localhost:3000/api/products/" + element.id)
     .then((resultats) => resultats.json())
     .then(function (value) {
       const item = value;
       //console.log("voici les infos du produit:",item)
 
-      //________ creation/selection des elements html pour affichage des "infos produit"dans le DOM :
+//________ creation/selection des elements html pour affichage des "infos produit" dans le DOM:
       let cartItem = document.createElement("article");
       cartItem.className = "cart__item";
       cartItem.setAttribute("data-id", element.id);
@@ -93,30 +90,31 @@ for (let element of basket) {
       document.querySelector("#cart__items").appendChild(cartItem);
 
       let allButtonSuppr = document.querySelectorAll(".deleteItem");
-      //console.log(allButtonSuppr);
 
       let allInput = document.querySelectorAll(".itemQuantity");
-      //console.log(allInput)
 
+//________ appel des fonctions "suppr" et "change" pour execution (cf details ci-dessous):
       supprProduct(allButtonSuppr);
       changeQuantityProduct(allInput);
     });
 }
 
 //_____________________________________ CALCULS QUANTITES / MONTANTS __________________________________/
-//________ creation fonction qui calcule la somme des quantités des produits stockés et affiche sa valeur dans le DOM :
+//________ creation fonction qui calcule la somme des quantités des produits stockés et affiche sa valeur dans le DOM:
 function calculQuantTot(basket) {
+  let sommeQuantity = 0;
   basket.forEach((element) => {
     sommeQuantity += parseInt(element.quantity);
   });
   let totalQuantity = document.getElementById("totalQuantity");
   totalQuantity.textContent = sommeQuantity;
-  console.log("somme des quantites des produits du panier:", sommeQuantity);
+  //console.log("somme des quantites des produits du panier:", sommeQuantity);
 }
 calculQuantTot(basket);
 
-//________ creation fonction qui calcule le montant total des produits stockés et affiche sa valeur dans le DOM :
+//________ creation fonction qui calcule le montant total des produits stockés et affiche sa valeur dans le DOM:
 function calculAmountTot(basket) {
+  let totalAmount = 0;
   basket.forEach((element) => {
     fetch("http://localhost:3000/api/products/" + element.id)
       .then((resultats) => resultats.json())
@@ -132,24 +130,27 @@ function calculAmountTot(basket) {
 calculAmountTot(basket);
 
 //_____________________________________ GESTION BOUTON SUPPRESSION  __________________________________/
-//________ creation fonction pour permettre la suppression d'un produit (dans localstorage && DOM):
+//________ creation fonction qui permet la suppression d'un produit (dans localstorage && DOM):
+//________ ecoute au click pour chaque bouton "supprimer",
+//________ rapprochement du bouton avec son article parent et recuperation des id et color concernés (=identification du produit à supprimer):
+//________ filtrage/recuperation de tous les produits du panier qui ont (id  && couleur) differents de celui du produit à supprimer:
+//________ enregistrement du panier filtré + suppression du DOM de l'article + recalcul des (quantite et montant) tot:
 function supprProduct(allButtonSuppr) {
   for (let button of allButtonSuppr) {
     //console.log(button);
-    //________ ecoute au click sur pour chaque bouton "supprimer":
+
     button.addEventListener("click", function () {
       let basket = JSON.parse(localStorage.getItem("stockProduct"));
-      //________ rapprochement du bouton avec article parent et recuperation des id et color concernés (=identification du produit à supprirmer):
       let articleToSuppr = button.closest("article");
       let idToSuppr = articleToSuppr.dataset.id;
       let colorToSuppr = articleToSuppr.dataset.color;
-      //________ filtrage/recuperation de tous les produits du panier qui ont (id  && couleur) differents de celui du produit à supprimer:
+
       basket = basket.filter(
         (stock) => stock.id != idToSuppr || stock.color != colorToSuppr
       );
-      //________ enregistrement du panier filtré + suppression du DOM de l'article + recalcul des (quantite et montant) tot:
+
       localStorage.setItem("stockProduct", JSON.stringify(basket));
-      console.log(basket);
+      //console.log(basket);
       articleToSuppr.remove();
       calculQuantTot(basket);
       calculAmountTot(basket);
@@ -158,30 +159,36 @@ function supprProduct(allButtonSuppr) {
 }
 
 //____________________________________ GESTION INPUT CHANGEMENT QUANTITE _________________________________/
-//________ creation fonction pour permettre la modification de la quantite d'un produit:
+//________ creation fonction qui permet la modification de la quantite d'un produit:
+//________ ecoute d'un changement pour chaque input:
+//________ rapprochement de la balise input avec son article parent et recuperation des id et color concernés:
+//________ recherche dans le panier du produit qui a les mêmes (id && couleur) que celui dont on souhaite modifier la quantite:
+//________ si ce produit est trouvé dans le panier et que la quantite renseignee repond à des conditions de validite alors sa quantite est modifiée (= valeur de l'input),
+//________ sinon affichage d'un message pour rectification
+//________ enregistrement du "nouveau" panier + recalcul des (quantite et montant) tot:
 function changeQuantityProduct(allInput) {
   for (let input of allInput) {
-    //________ ecoute d'un changement pour chaque input:
+
     input.addEventListener("change", function () {
       let basket = JSON.parse(localStorage.getItem("stockProduct"));
-      //________ rapprochement de la baslise input avec son article parent et recuperation des id et color concernés:
+      
       let articleTarget = input.closest("article");
       let idTarget = articleTarget.dataset.id;
       let colorTarget = articleTarget.dataset.color;
-      //________ recherche dans le panier du produit qui a les mêmes (id && couleur) que celui dont on souhaite modifier la quantite:
+      
       let foundProduct = basket.find(
         (stock) => stock.id == idTarget && stock.color == colorTarget
       );
-      //________ si ce produit est trouvé dans le panier:
+      
       if (foundProduct) {
         if (input.value >= 1 && input.value <= 100)
           foundProduct.quantity = input.value;
       } else {
         alert(
-          "la quantité resensignée doit être comprise entre 1 et 100 unités. Veuillez rectifier svp."
+          "La quantité resensignée doit être comprise entre 1 et 100 unités. Veuillez rectifier svp."
         );
       }
-      //________ enregistrement du "nouveau" panier + recalcul des (quantite et montant) tot:
+      
       localStorage.setItem("stockProduct", JSON.stringify(basket));
       calculQuantTot(basket);
       calculAmountTot(basket);
@@ -189,7 +196,7 @@ function changeQuantityProduct(allInput) {
   }
 }
 
-//______________________________________________ GESTION FORMULAIRE __________________________________________/
+//______________________________________________ GESTION FORMULAIRE ______________________________________/
 //____________ selection des elements html :
 let inputFirstName = document.getElementById("firstName");
 let inputLastName = document.getElementById("lastName");
@@ -205,11 +212,11 @@ let emailError = document.getElementById("emailErrorMsg");
 
 //____________ déclaration des regex pour verification de la validite des champs:
 let textRegex = /^[a-z'àåáçéèêëîïìíñœæôöòóùûüúÿ\s-]{2,30}$/i;
-let addressRegex = /^[a-z'àåáçéèêëîïìíñœæôöòóùûüúÿ{0-9}\s-]{2,50}$/i;
+let addressRegex = /^[a-z'àåáçéèêëîïìíñœæôöòóùûüúÿ{0-9}\s-]{2,60}$/i;
 let emailRegex =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-//____________ ecoute des différents champs + vérification validité des données (regex) + message erreur le cas échéant :
+//____________ ecoute des différents champs + verification validite des donnees (regex) + message erreur le cas échéant :
 inputFirstName.addEventListener("change", function () {
   if (inputFirstName.value.match(textRegex) == null) {
     firstNameError.textContent = "Veuillez entrer votre prénom svp";
@@ -252,16 +259,20 @@ inputEmail.addEventListener("change", function () {
 });
 
 //___________________________________________ GESTION BOUTON COMMANDER ________________________________________/
-//________recuperation sous forme de tableau "texte" de tous les id des produits du panier :
-const productsId = JSON.stringify(basket.map((element) => element.id));
-console.log("voici le tableau de tous les id du panier:", productsId);
-//________ selection de l'element html "bouton commander":
+//________recuperation sous forme de tableau de tous les id des produits du panier :
+const productsId = basket.map((element) => element.id);
+//console.log("voici le tableau de tous les id du panier:", productsId);
+
+//________ selection de l'element html "bouton commander" et ecoute au click du bouton:
+//________ verification de la presence et validite des champs,
+//________ si champs valides, creation de l'objet qui contient les infos attendues par l'API,
+//________ requete POST avec l'order envoyee à l'API,
+//________ l'API renvoi notamment l'orderId et la page "confirmation", le panier est vidé,
+//________ si champs non valides, affichage message erreur
 let orderButton = document.getElementById("order");
-//________ecoute au click du "bouton commander":
+
 orderButton.addEventListener("click", function (event) {
   event.preventDefault();
-  console.log("rachida");
-  //________verification de la validite des criteres imposés par les regex:
   if (
     inputFirstName.value.match(textRegex) !== null &&
     inputLastName.value.match(textRegex) !== null &&
@@ -274,20 +285,20 @@ orderButton.addEventListener("click", function (event) {
     inputCity.value !== "" &&
     inputEmail.value !== ""
   ) {
-    console.log("ca marche champs valides!");
-    //________ declaration/creation de l'objet qui contient toutes les infos à envoyer à l'API :
+   //console.log("Tous les champs sont valides, ok");
+
     const userInfo = {
-      contact: {
+      contact : {
         firstName: inputFirstName.value,
         lastName: inputLastName.value,
         address: inputAddress.value,
         city: inputCity.value,
-        email: inputEmail.value,
+        email: inputEmail.value
       },
       products : productsId
     };
-    console.log("voici les infos du user:", userInfo);
-    //____________ requete POST envoyee à l'API:
+    //console.log("voici les infos du user:", userInfo);
+
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       headers: {
@@ -298,13 +309,10 @@ orderButton.addEventListener("click", function (event) {
     })
       .then((resultats) => resultats.json())
       .then((data) => {
-        console.log(data);
-        document.location.href = "./confirmation.html?order=" + data.orderId;
+        console.log("voici la data suite au fetch POST :", data);
+        window.location.href = "./confirmation.html?order=" + data.orderId;
         localStorage.clear();
       })
-      .catch(function (error) {
-        console.log(error.message);
-      });
   } else {
     alert(
       "La commande ne peut pas être validée. Les champs doivent être renseignés correctement."

@@ -1,19 +1,15 @@
 /***************************** FICHIER SCRIPT.JS (RATTACHE A INDEX.HTML) ****************************/
 
 //_______________________________________ GESTION AFFICHAGE PAGE ____________________________________/
-//________ requete GET de l'ensemble des produits + récupération des infos :   
+//________ requete GET de l'ensemble des produits puis recuperation de la reponse au format json puis integration de celle-ci dans une constante "products" (tableau d'objets):
 fetch("http://localhost:3000/api/products")
-//________ analyse de la reponse au format json :
 .then((resultats) => resultats.json())
-//________ récupération de la reponse et intégration dans une constante tableau "products" :
 .then(function(value) {
   const products = value
   //console.log("voici le tableau de tous les produits:", products);
 
-//________ boucle for of pour parcourir le tableau "products" :
+//________ et boucle for of qui parcourt chaque element du tableau pour creer et afficher chacun des elements dans le DOM:
 for (let product of products) {
-
-//________ création des elements html avec renseignement des attributs :
 
   const article = document.createElement("article")
 
@@ -30,7 +26,6 @@ for (let product of products) {
   const descriptionElement = document.createElement("p")
   descriptionElement.innerText = product.description
 
-//________ selection de l'element html "section .items" et affichage des elements dans le DOM :
   const sectionItems = document.querySelector(".items")
   article.appendChild(imageElement)
   article.appendChild(nameElement)
@@ -39,7 +34,7 @@ for (let product of products) {
   sectionItems.appendChild(linkElement)
 
 }})
-//________ sinon si la requete n'a pas fonctionnee affichage "error" dans la console :
+//________ sinon si la requete n'a pas fonctionnee affichage "error" dans la console:
 .catch(function(error) {
     console.log(error)
 })
