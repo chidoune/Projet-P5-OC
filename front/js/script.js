@@ -1,14 +1,16 @@
 /***************************** FICHIER SCRIPT.JS (RATTACHE A INDEX.HTML) ****************************/
 
 //_______________________________________ GESTION AFFICHAGE PAGE ____________________________________/
-//________ requete GET de l'ensemble des produits puis recuperation de la reponse au format json puis integration de celle-ci dans une constante "products" (tableau d'objets):
+//________ requete GET de l'ensemble des produits puis recuperation de la reponse au format json 
+//________ puis integration de celle-ci dans une constante "products" (tableau d'objets):
 fetch("http://localhost:3000/api/products")
 .then((resultats) => resultats.json())
 .then(function(value) {
   const products = value
   //console.log("voici le tableau de tous les produits:", products);
 
-//________ et boucle for of qui parcourt chaque element du tableau pour creer et afficher chacun des elements dans le DOM:
+//________ et boucle for of qui parcourt chaque element du tableau pour creer 
+//________ et afficher chacun des elements dans le DOM:
 for (let product of products) {
 
   const article = document.createElement("article")

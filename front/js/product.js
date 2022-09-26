@@ -1,7 +1,8 @@
 /*************************** FICHIER PRODUCT.JS (RATTACHE A PRODUCT.HTML) ***************************/
 
 //_______________________________________ GESTION AFFICHAGE PAGE ____________________________________/
-//________ requete GET de l'ensemble des produits puis recuperation de la reponse au format json puis integration de celle-ci dans une constante "products":
+//________ requete GET de l'ensemble des produits puis recuperation de la reponse au format json 
+//________ puis integration de celle-ci dans une constante "products":
 fetch("http://localhost:3000/api/products")
   .then((resultats) => resultats.json())
   .then(function (value) {
@@ -18,8 +19,10 @@ fetch("http://localhost:3000/api/products")
       .then(function (value) {
         //console.log("voici les infos du produit en cours:",value)
 
-//________ puis boucle for of qui parcourt le tableau "products" et compare l'id du produit avec chacun des id de "products"
-//________ si la correspondance est trouvée alors les elements du produit sont créés/selectionnés et affichés dans le DOM:     
+//________ puis boucle for of qui parcourt le tableau "products" 
+//________ et compare l'id du produit avec chacun des id de "products"
+//________ si la correspondance est trouvée alors les elements du produit sont créés/selectionnés
+//________ et affichés dans le DOM:     
         for (let product of products) {
           if (productId === product._id) {
 
@@ -33,7 +36,8 @@ fetch("http://localhost:3000/api/products")
             document.getElementById("description").textContent = product.description;
               
 
-//________ boucle for of qui parcourt le tableau des couleurs du produit et crée l'element "option" avec choix des couleurs et l'affichage dans le DOM:
+//________ boucle for of qui parcourt le tableau des couleurs du produit et crée l'element "option" 
+//________ avec choix des couleurs et l'affichage dans le DOM:
             for (let color of product.colors) {
               const colorElement = document.createElement("option");
               colorElement.textContent = color;
@@ -61,7 +65,10 @@ fetch("http://localhost:3000/api/products")
 
 //________ creation d'une fonction qui permet d'ajouter un produit au panier ou de modifier sa quantité:
 //________ recherche si les references (id && color) du produit ajouté existent deja dans le panier,
-//________ si c'est le cas, alors la quantite du produit deja en stock est incrementée avec celle du produit ajouté sous réserve de conditions,
+//________ si c'est le cas, alors la quantite du produit deja en stock est incrementée 
+//________ avec celle du produit ajouté sous réserve de conditions,
+//________ si ce n'est pas le cas, le produit est ajouté au panier,
+//________ le "nouveau" panier est ensuite enregistré dans le localstorage:
     function addStock(product) {
       let stock = getStock();
       let foundProduct = stock.find(
@@ -76,7 +83,6 @@ fetch("http://localhost:3000/api/products")
             alert("La quantité du produit ne peut pas dépasser 100 unités. Vous ne pouvez rajouter que " + limitQuantity + " unités du produit.");
           }
         }
-//________ si ce n'est pas le cas, le produit est ajouté au panier:
       } else {
         if (
           product.color !== "" &&
@@ -86,7 +92,6 @@ fetch("http://localhost:3000/api/products")
           stock.push(product);
         }
       }
-//________ le "nouveau" panier est ensuite enregistré dans le localstorage:
       saveStock(stock);
     }
 
@@ -95,6 +100,7 @@ fetch("http://localhost:3000/api/products")
     const orderButton = document.querySelector("#addToCart");
     const quantityStock = document.getElementById("quantity");
     const colorStock = document.getElementById("colors");
+    
 //________ ecoute au click du bouton -> definition du panier et appel de la fonction addStock:
     orderButton.addEventListener("click", function () {
       let stock = {

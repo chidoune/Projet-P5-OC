@@ -100,7 +100,8 @@ for (let element of basket) {
 }
 
 //_____________________________________ CALCULS QUANTITES / MONTANTS __________________________________/
-//________ creation fonction qui calcule la somme des quantités des produits stockés et affiche sa valeur dans le DOM:
+//________ creation fonction qui calcule la somme des quantités des produits stockés
+//________ et affiche sa valeur dans le DOM:
 function calculQuantTot(basket) {
   let sommeQuantity = 0;
   basket.forEach((element) => {
@@ -112,7 +113,8 @@ function calculQuantTot(basket) {
 }
 calculQuantTot(basket);
 
-//________ creation fonction qui calcule le montant total des produits stockés et affiche sa valeur dans le DOM:
+//________ creation fonction qui calcule le montant total des produits stockés 
+//________ et affiche sa valeur dans le DOM:
 function calculAmountTot(basket) {
   let totalAmount = 0;
   basket.forEach((element) => {
@@ -132,8 +134,8 @@ calculAmountTot(basket);
 //_____________________________________ GESTION BOUTON SUPPRESSION  __________________________________/
 //________ creation fonction qui permet la suppression d'un produit (dans localstorage && DOM):
 //________ ecoute au click pour chaque bouton "supprimer",
-//________ rapprochement du bouton avec son article parent et recuperation des id et color concernés (=identification du produit à supprimer):
-//________ filtrage/recuperation de tous les produits du panier qui ont (id  && couleur) differents de celui du produit à supprimer:
+//________ rapprochement du bouton avec son article parent et recuperation des id et color concernés,
+//________ recuperation de tous les produits du panier qui ont (id  && couleur) != de celui du produit à suppr:
 //________ enregistrement du panier filtré + suppression du DOM de l'article + recalcul des (quantite et montant) tot:
 function supprProduct(allButtonSuppr) {
   for (let button of allButtonSuppr) {
@@ -160,12 +162,13 @@ function supprProduct(allButtonSuppr) {
 
 //____________________________________ GESTION INPUT CHANGEMENT QUANTITE _________________________________/
 //________ creation fonction qui permet la modification de la quantite d'un produit:
-//________ ecoute d'un changement pour chaque input:
-//________ rapprochement de la balise input avec son article parent et recuperation des id et color concernés:
-//________ recherche dans le panier du produit qui a les mêmes (id && couleur) que celui dont on souhaite modifier la quantite:
-//________ si ce produit est trouvé dans le panier et que la quantite renseignee repond à des conditions de validite alors sa quantite est modifiée (= valeur de l'input),
-//________ sinon affichage d'un message pour rectification
-//________ enregistrement du "nouveau" panier + recalcul des (quantite et montant) tot:
+//________ ecoute d'un changement pour chaque input,
+//________ rapprochement de la balise input avec son article parent et recuperation des id et color concernés,
+//________ recherche dans le panier du produit qui a les mêmes (id && couleur) que celui dont on souhaite modifier la quantite,
+//________ si ce produit est trouvé dans le panier et que la quantite renseignee repond à des conditions de validite 
+//________ alors sa quantite est modifiée (= prend la valeur de l'input),
+//________ sinon affichage d'un message pour rectification,
+//________ enregistrement du "nouveau" panier + recalcul des (quantite et montant) tot
 function changeQuantityProduct(allInput) {
   for (let input of allInput) {
 
@@ -181,20 +184,21 @@ function changeQuantityProduct(allInput) {
       );
       
       if (foundProduct) {
-        if (input.value >= 1 && input.value <= 100)
+        if (input.value >= 1 && input.value <= 100) {
           foundProduct.quantity = input.value;
-      } else {
+        } else {
         alert(
-          "La quantité resensignée doit être comprise entre 1 et 100 unités. Veuillez rectifier svp."
+          "La quantité renseignée doit être comprise entre 1 et 100 unités. Veuillez rectifier la quantité svp."
         );
-      }
+        };
+      };
       
       localStorage.setItem("stockProduct", JSON.stringify(basket));
       calculQuantTot(basket);
       calculAmountTot(basket);
     });
-  }
-}
+  };
+};
 
 //______________________________________________ GESTION FORMULAIRE ______________________________________/
 //____________ selection des elements html :
@@ -309,7 +313,7 @@ orderButton.addEventListener("click", function (event) {
     })
       .then((resultats) => resultats.json())
       .then((data) => {
-        console.log("voici la data suite au fetch POST :", data);
+        //console.log("voici la data suite au fetch POST :", data);
         window.location.href = "./confirmation.html?order=" + data.orderId;
         localStorage.clear();
       })
