@@ -74,15 +74,23 @@ fetch("http://localhost:3000/api/products")
       let foundProduct = stock.find(
         (stock) => stock.id == product.id && stock.color == product.color
         );    
-      if (foundProduct) {
+      if (
+        colorStock.value == "" || quantityStock.value == 0
+        ) {
+        alert("Pour que le produit soit ajouté au panier vous devez avoir renseigné la couleur et la quantité. Merci de renseigner ces éléments.")
+      }
+      else if (foundProduct) {
         if (product.quantity >= 1 && product.quantity <= 99) {
           if (product.quantity <= 100 - parseInt(foundProduct.quantity)) {
-            foundProduct.quantity = parseInt(foundProduct.quantity) + parseInt(product.quantity);             
+            foundProduct.quantity = parseInt(foundProduct.quantity) + parseInt(product.quantity);  
+            alert("L'ajout de produit(s) a bien été enregistré. Nous vous remercions.")           
           } else if (product.quantity > 100 - parseInt(foundProduct.quantity)) {
             let limitQuantity = 100 - parseInt(foundProduct.quantity)
             alert("La quantité du produit ne peut pas dépasser 100 unités. Vous ne pouvez rajouter que " + limitQuantity + " unités du produit.");
           }
         }
+        if (product.quantity <= 0 || product.quantity >= 100) 
+        {alert("Vous devez entrer une quantité comprise entre 1 et 100 unités.")}
       } else {
         if (
           product.color !== "" &&
@@ -90,7 +98,9 @@ fetch("http://localhost:3000/api/products")
           product.quantity <= 100
         ) {
           stock.push(product);
+          alert("L'ajout de produit(s) a bien été enregistré. Nous vous remercions.")
         }
+        else {alert("Vous devez entrer une quantité comprise entre 1 et 100 unités. Merci de rectifier.")}
       }
       saveStock(stock);
     }
@@ -103,11 +113,11 @@ fetch("http://localhost:3000/api/products")
     
 //________ ecoute au click du bouton -> definition du panier et appel de la fonction addStock:
     orderButton.addEventListener("click", function () {
-      let stock = {
+        let stock = {
         id: productId,
         quantity: quantityStock.value,
         color: colorStock.value,
       };
-      addStock(stock);
+        addStock(stock);
     });
   });
